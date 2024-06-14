@@ -4,14 +4,15 @@
 
 <div class="d-flex justify-content-between mt-4">
     <form class="d-flex" action="{{ route('pets.index') }}" method="GET">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search">
+        <input class="form-control me-2" type="search" placeholder="Search Pet or Owner" aria-label="Search"
+            name="search">
         <button class="btn btn-outline-success" type="submit">Search</button>
     </form>
     @if(request()->query('search'))
         <a class="btn btn-primary" href="{{ route('pets.index') }}">Home</a>
     @endif
-
 </div>
+
 
 <div class="card mt-5">
     <h2 class="card-header">Pet List</h2>

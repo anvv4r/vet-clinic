@@ -7,10 +7,7 @@ use App\Models\Pet;
 use App\Models\Owner;
 use App\Models\PetImage;
 use Illuminate\View\View;
-use App\Http\Requests\PetStoreRequest;
-use App\Http\Requests\PetUpdateRequest;
 use Illuminate\Http\RedirectResponse;
-
 
 class PetController extends Controller
 {
@@ -31,10 +28,10 @@ class PetController extends Controller
 
         return view('pets.index', compact('pets'))
             ->with('i', (request()->input('page', 1) - 1) * 5);
-    }    // /**
+    }
+
+    // /**
     //  * Get the validation rules that apply to the request.
-    //  *
-    //  * @return array
     //  */
     public function rules()
     {
@@ -44,7 +41,7 @@ class PetController extends Controller
             'breed' => 'required|max:255',
             'age' => 'required|numeric',
             'weight' => 'required|numeric',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'owner.first_name' => 'required|max:255',
             'owner.surname' => 'required|max:255',
             'owner.email' => 'required|email|max:255',
@@ -66,18 +63,9 @@ class PetController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    // public function store(PetStoreRequest $request): RedirectResponse
-    // {
-    //     Pet::create($request->validated());
-
-    //     return redirect()->route('pets.index')
-    //         ->with('success', 'Pet submit successfully.');
-    // }
     public function store(Request $request, Pet $pet)
     {
-        $request->validate(array_merge($this->rules(), [
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]));
+        $request->validate($this->rules());
 
         // Create the owner
         $ownerData = $request->input('owner');
@@ -88,13 +76,24 @@ class PetController extends Controller
         $petData['owner_id'] = $owner->id;
         $pet = Pet::create($petData);
 
-        // Upload the image
-        $imageName = time() . '.' . $request->image->extension();
-        $request->image->move(public_path('images'), $imageName);
+        // Get the original file name without extension
+        $imageName = pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
+
+        // Generate a unique ID
+        $uniqueSuffix = uniqid('_');
+
+        // Get file extension
+        $extension = $request->image->extension();
+
+        // Create a unique file name
+        $finalImageName = "{$imageName}{$uniqueSuffix}.{$extension}";
+
+        // Move the image to the public/images/pets directory with the new unique name
+        $request->image->move(public_path('images/pets'), $finalImageName);
 
         // Create the pet image
         $petImage = new PetImage;
-        $petImage->path = $imageName;
+        $petImage->path = $finalImageName;
         $petImage->pet_id = $pet->id;
         $petImage->save();
 
@@ -113,34 +112,47 @@ class PetController extends Controller
      */
     public function edit(Pet $pet): View
     {
-        return view('pets.edit', compact('pet'));
+        $species = Pet::select('species')->distinct()->get();
+        $breeds = Pet::select('breed')->distinct()->get();
+
+        return view('pets.edit', compact('pet', 'species', 'breeds'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    // public function update(PetUpdateRequest $request, Pet $pet): RedirectResponse
-    // {
-    //     $pet->update($request->validated());
-
-    //     return redirect()->route('pets.index')
-    //         ->with('success', 'Pet updated successfully');
-    // }
-    // public function update(PetUpdateRequest $request, Pet $pet)
-    // {
-    //     $validatedData = $request->validated();
-
-    //     $pet->update($validatedData);
-
-    //     // Add a success message to the session
-    //     return redirect()->route('pets.index')->with('success', 'Pet updated successfully');
-    // }
-
     public function update(Request $request, Pet $pet)
     {
         $request->validate($this->rules());
 
-        // $pet->update($request->validated());
+        // Update the owner
+        $ownerData = $request->input('owner');
+        $pet->owner->update($ownerData);
+
+        // Update the pet
+        $petData = $request->except('owner', 'image');
+        $pet->update($petData);
+
+        // Upload the image
+        if ($request->hasFile('image')) {
+            $imageName = pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME); // Get original file name without extension
+            $uniqueSuffix = uniqid('_'); // Generate a unique ID
+            $extension = $request->image->extension(); // Get file extension
+
+            $finalImageName = "{$imageName}{$uniqueSuffix}.{$extension}";
+
+            $request->image->move(public_path('images/pets'), $finalImageName);
+
+            // Check if the pet already has an image
+            $petImage = PetImage::where('pet_id', $pet->id)->first();
+            if (!$petImage) {
+                // Create a new image only if the pet doesn't already have one
+                $petImage = new PetImage;
+                $petImage->path = $finalImageName;
+                $petImage->pet_id = $pet->id;
+                $petImage->save(); // Save the PetImage model instance
+            }
+        }
 
         // Add a success message to the session
         return redirect()->route('pets.index')->with('success', 'Pet updated successfully');

@@ -1,7 +1,15 @@
 @extends('pets.layout')
 
 @section('content')
-
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <div class="card mt-5">
     <h2 class="card-header">Edit Pet</h2>
     <div class="card-body">
@@ -11,6 +19,7 @@
                 Back</a>
         </div>
 
+
         <form action="{{ route('pets.update', $pet->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
@@ -18,23 +27,41 @@
             <div class="mb-3">
                 <label for="inputName" class="form-label"><strong>Name:</strong></label>
                 <input type="text" name="name" value="{{ $pet->name }}"
-                    class="form-control @error('name') is-invalid @enderror" id="inputName" placeholder="Name">
+                    class="form-control @error('name') is-invalid @enderror" id="inputName">
                 @error('name')
                     <div class="form-text text-danger">{{ $message }}</div>
                 @enderror
             </div>
             <div class="mb-3">
                 <label for="inputSpecies" class="form-label"><strong>Species:</strong></label>
-                <input type="text" name="species" value="{{ $pet->species }}"
-                    class="form-control @error('species') is-invalid @enderror" id="inputSpecies" placeholder="Species">
+                <select name="species" id="inputSpecies" class="form-control">
+                    @foreach($species as $specie)
+                        <option value="{{ $specie->species }}" {{ $pet->species == $specie->species ? 'selected' : '' }}>
+                            {{ $specie->species }}
+                        </option>
+                    @endforeach
+                </select>
                 @error('species')
+                    <div class="form-text text-danger">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="mb-3">
+                <label for="inputBreed" class="form-label"><strong>Breed:</strong></label>
+                <select name="breed" id="inputBreed" class="form-control @error('breed') is-invalid @enderror">
+                    @foreach($breeds as $breed)
+                        <option value="{{ $breed->breed }}" {{ $pet->breed == $breed->breed ? 'selected' : '' }}>
+                            {{ $breed->breed }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('breed')
                     <div class="form-text text-danger">{{ $message }}</div>
                 @enderror
             </div>
             <div class="mb-3">
                 <label for="inputAge" class="form-label"><strong>Age:</strong></label>
                 <input type="text" name="age" value="{{ $pet->age }}"
-                    class="form-control @error('age') is-invalid @enderror" id="inputAge" placeholder="Age">
+                    class="form-control @error('age') is-invalid @enderror" id="inputAge">
                 @error('age')
                     <div class="form-text text-danger">{{ $message }}</div>
                 @enderror
@@ -42,7 +69,7 @@
             <div class="mb-3">
                 <label for="inputWeight" class="form-label"><strong>Weight:</strong></label>
                 <input type="text" name="weight" value="{{ $pet->weight }}"
-                    class="form-control @error('weight') is-invalid @enderror" id="inputWeight" placeholder="Weight">
+                    class="form-control @error('weight') is-invalid @enderror" id="inputWeight">
                 @error('weight')
                     <div class="form-text text-danger">{{ $message }}</div>
                 @enderror
@@ -50,7 +77,7 @@
             <div class="mb-3">
                 <label for="inputImage" class="form-label"><strong>Image:</strong></label>
                 <input type="file" name="image" class="form-control @error('image') is-invalid @enderror"
-                    id="inputImage" placeholder="Image">
+                    id="inputImage">
                 @error('image')
                     <div class="form-text text-danger">{{ $message }}</div>
                 @enderror
@@ -85,22 +112,6 @@
                 <input type="text" name="owner[address]" id="address" class="form-control"
                     value="{{ $pet->owner->address }}">
             </div>
-            <!-- <div class="mb-3">
-                <label for="inputOwner" class="form-label"><strong>Owner:</strong></label>
-                <input type="text" name="owner" value="{{ $pet->owner->first_name }}"
-                    class="form-control @error('owner') is-invalid @enderror" id="inputOwner" placeholder="Owner">
-                @error('owner')
-                    <div class="form-text text-danger">{{ $message }}</div>
-                @enderror
-            </div>
-            <div class="mb-3">
-                <label for="inputImage" class="form-label"><strong>Image:</strong></label>
-                <input type="file" name="image" class="form-control @error('image') is-invalid @enderror"
-                    id="inputImage">
-                @error('image')
-                    <div class="form-text text-danger">{{ $message }}</div>
-                @enderror
-            </div> -->
             <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Update</button>
         </form>
 
