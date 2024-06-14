@@ -2,6 +2,17 @@
 
 @section('content')
 
+<div class="d-flex justify-content-between mt-4">
+    <form class="d-flex" action="{{ route('pets.index') }}" method="GET">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+    @if(request()->query('search'))
+        <a class="btn btn-primary" href="{{ route('pets.index') }}">Home</a>
+    @endif
+
+</div>
+
 <div class="card mt-5">
     <h2 class="card-header">Pet List</h2>
     <div class="card-body">
@@ -36,7 +47,7 @@
                         <td>{{ $pet->species }}</td>
                         <td>{{ $pet->breed }}</td>
                         <td>{{ $pet->age }}</td>
-                        <td>{{ $pet->owner->first_name }}</td>
+                        <td>{{ $pet->owner ? $pet->owner->first_name : 'No owner' }}</td>
                         <td>
                             <form action="{{ route('pets.destroy', $pet->id) }}" method="POST">
 
@@ -66,5 +77,6 @@
     </div>
 
 </div>
-
+<br>
+<br>
 @endsection

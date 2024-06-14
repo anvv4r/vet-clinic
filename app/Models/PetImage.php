@@ -8,9 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class PetImage extends Model
 {
     use HasFactory;
-
+    protected $table = 'images';
     protected $fillable = [
         'id',
         'path',
     ];
 }
+

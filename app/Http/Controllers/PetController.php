@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Pet;
+use App\Models\Owner;
 use Illuminate\View\View;
 use App\Http\Requests\PetStoreRequest;
 use App\Http\Requests\PetUpdateRequest;
@@ -12,12 +13,41 @@ use Illuminate\Http\RedirectResponse;
 
 class PetController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $pets = Pet::latest()->paginate(5);
+        $search = $request->input('search');
+
+        $pets = Pet::with('owner')
+            ->when($search, function ($query, $search) {
+                return $query->where('name', 'like', "%{$search}%")
+                    ->orWhereHas('owner', function ($query) use ($search) {
+                        $query->where('first_name', 'like', "%{$search}%")
+                            ->orWhere('surname', 'like', "%{$search}%");
+                    });
+            })
+            ->latest()
+            ->paginate(10);
 
         return view('pets.index', compact('pets'))
             ->with('i', (request()->input('page', 1) - 1) * 5);
+    }    // /**
+    //  * Get the validation rules that apply to the request.
+    //  *
+    //  * @return array
+    //  */
+    public function rules()
+    {
+        return [
+            'name' => 'required|max:255',
+            'species' => 'required|max:255',
+            'breed' => 'required|max:255',
+            'age' => 'required|numeric',
+            'owner.first_name' => 'required|max:255',
+            'owner.surname' => 'required|max:255',
+            'owner.email' => 'required|email|max:255',
+            'owner.phone' => 'required|numeric',
+            'owner.address' => 'required',
+        ];
     }
 
     /**
@@ -25,18 +55,35 @@ class PetController extends Controller
      */
     public function create(): View
     {
-        return view('pets.create');
+        $species = Pet::select('species')->distinct()->get();
+        $breeds = Pet::select('breed')->distinct()->get();
+        return view('pets.create', compact('species', 'breeds'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(PetStoreRequest $request): RedirectResponse
-    {
-        Pet::create($request->validated());
+    // public function store(PetStoreRequest $request): RedirectResponse
+    // {
+    //     Pet::create($request->validated());
 
-        return redirect()->route('pets.index')
-            ->with('success', 'Pet submit successfully.');
+    //     return redirect()->route('pets.index')
+    //         ->with('success', 'Pet submit successfully.');
+    // }
+    public function store(Request $request, Pet $pet)
+    {
+        $request->validate($this->rules());
+
+        // Create the owner
+        $ownerData = $request->input('owner');
+        $owner = Owner::create($ownerData);
+
+        // Create the pet
+        $petData = $request->except('owner');
+        $petData['owner_id'] = $owner->id;
+        $pet = Pet::create($petData);
+
+        return redirect()->route('pets.index')->with('success', 'Pet and owner created successfully');
     }
 
     /**
@@ -58,12 +105,31 @@ class PetController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(PetUpdateRequest $request, Pet $pet): RedirectResponse
-    {
-        $pet->update($request->validated());
+    // public function update(PetUpdateRequest $request, Pet $pet): RedirectResponse
+    // {
+    //     $pet->update($request->validated());
 
-        return redirect()->route('pets.index')
-            ->with('success', 'Pet updated successfully');
+    //     return redirect()->route('pets.index')
+    //         ->with('success', 'Pet updated successfully');
+    // }
+    // public function update(PetUpdateRequest $request, Pet $pet)
+    // {
+    //     $validatedData = $request->validated();
+
+    //     $pet->update($validatedData);
+
+    //     // Add a success message to the session
+    //     return redirect()->route('pets.index')->with('success', 'Pet updated successfully');
+    // }
+
+    public function update(Request $request, Pet $pet)
+    {
+        $request->validate($this->rules());
+
+        // $pet->update($request->validated());
+
+        // Add a success message to the session
+        return redirect()->route('pets.index')->with('success', 'Pet updated successfully');
     }
 
     /**

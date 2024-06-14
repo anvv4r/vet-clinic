@@ -11,7 +11,7 @@ class Owner extends Model
 
     protected $fillable = [
         'first_name',
-        'sure_name',
+        'surname',
         'email',
         'phone',
         'address',
