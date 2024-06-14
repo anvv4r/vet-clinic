@@ -16,4 +16,9 @@ class Owner extends Model
         'phone',
         'address',
     ];
+
+    public function visits()
+    {
+        return $this->hasManyThrough(Visit::class, Pet::class);
+    }
 }

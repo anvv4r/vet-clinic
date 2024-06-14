@@ -30,4 +30,9 @@ class Pet extends Model
         return $this->hasMany(PetImage::class);
     }
 
+    public function visits()
+    {
+        return $this->hasMany(Visit::class);
+    }
+
 }
