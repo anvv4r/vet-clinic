@@ -19,7 +19,7 @@
                 Back</a>
         </div>
 
-        <form action="{{ route('pets.store') }}" method="POST">
+        <form action="{{ route('pets.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="mb-3">
@@ -60,31 +60,48 @@
                     <div class="form-text text-danger">{{ $message }}</div>
                 @enderror
             </div>
+            <div class="mb-3">
+                <label for="inputWeight" class="form-label"><strong>Weight:</strong></label>
+                <input type="text" name="weight" class="form-control @error('weight') is-invalid @enderror"
+                    id="inputWeight" placeholder="Weight">
+                @error('weight')
+                    <div class="form-text text-danger">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="mb-3">
+                <label for="inputImage" class="form-label"><strong>Image:</strong></label>
+                <input type="file" name="image" class="form-control @error('image') is-invalid @enderror"
+                    id="inputImage" placeholder="Image">
+                @error('image')
+                    <div class="form-text text-danger">{{ $message }}</div>
+                @enderror
+            </div>
             <!-- Owner Details -->
             <h3>Owner Details</h3>
-            <div class="form-group">
-                <label for="owner_first_name">First Name:</label>
-                <input type="text" name="owner[first_name]" id="owner_first_name" class="form-control">
+            <div class="mb-3">
+                <label for="owner_first_name"><strong>First Name:</strong></label>
+                <input type="text" name="owner[first_name]" id="first_name" class="form-control"
+                    placeholder="First Name">
             </div>
 
-            <div class="form-group">
-                <label for="owner_surname">Surname:</label>
-                <input type="text" name="owner[surname]" id="surname" class="form-control">
+            <div class="mb-3">
+                <label for="owner_surname"><strong>Surname:</strong></label>
+                <input type="text" name="owner[surname]" id="surname" class="form-control" placeholder="Surname">
             </div>
 
-            <div class="form-group">
-                <label for="owner_email">Email:</label>
-                <input type="email" name="owner[email]" id="email" class="form-control">
+            <div class="mb-3">
+                <label for="owner_email"><strong>Email:</strong></label>
+                <input type="email" name="owner[email]" id="email" class="form-control" placeholder="Email">
             </div>
 
-            <div class="form-group">
-                <label for="owner_phone">Phone:</label>
-                <input type="text" name="owner[phone]" id="phone" class="form-control">
+            <div class="mb-3">
+                <label for="owner_phone"><strong>Phone:</strong></label>
+                <input type="text" name="owner[phone]" id="phone" class="form-control" placeholder="Phone">
             </div>
 
-            <div class="form-group">
-                <label for="owner_address">Address:</label>
-                <input type="text" name="owner[address]" id="address" class="form-control">
+            <div class="mb-3">
+                <label for="owner_address"><strong>Address:</strong></label>
+                <input type="text" name="owner[address]" id="address" class="form-control" placeholder="Address">
             </div>
 
             <!-- <div class="mb-3">

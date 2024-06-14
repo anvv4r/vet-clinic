@@ -11,7 +11,9 @@
                 Back</a>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12">
-            <img src="{{ asset('images/pets/' . $pet->name . '.jpg') }}" width="300px" alt="{{ $pet->name }}">
+            @foreach ($pet->images as $image)
+                <img src="{{ asset('images/' . $image->path) }}" alt="Pet Image">
+            @endforeach
         </div>
 
         <div class="row">

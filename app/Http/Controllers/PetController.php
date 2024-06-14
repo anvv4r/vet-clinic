@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Pet;
 use App\Models\Owner;
+use App\Models\PetImage;
 use Illuminate\View\View;
 use App\Http\Requests\PetStoreRequest;
 use App\Http\Requests\PetUpdateRequest;
@@ -42,6 +43,8 @@ class PetController extends Controller
             'species' => 'required|max:255',
             'breed' => 'required|max:255',
             'age' => 'required|numeric',
+            'weight' => 'required|numeric',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'owner.first_name' => 'required|max:255',
             'owner.surname' => 'required|max:255',
             'owner.email' => 'required|email|max:255',
@@ -72,20 +75,31 @@ class PetController extends Controller
     // }
     public function store(Request $request, Pet $pet)
     {
-        $request->validate($this->rules());
+        $request->validate(array_merge($this->rules(), [
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]));
 
         // Create the owner
         $ownerData = $request->input('owner');
         $owner = Owner::create($ownerData);
 
         // Create the pet
-        $petData = $request->except('owner');
+        $petData = $request->except('owner', 'image');
         $petData['owner_id'] = $owner->id;
         $pet = Pet::create($petData);
 
-        return redirect()->route('pets.index')->with('success', 'Pet and owner created successfully');
-    }
+        // Upload the image
+        $imageName = time() . '.' . $request->image->extension();
+        $request->image->move(public_path('images'), $imageName);
 
+        // Create the pet image
+        $petImage = new PetImage;
+        $petImage->path = $imageName;
+        $petImage->pet_id = $pet->id;
+        $petImage->save();
+
+        return redirect()->route('pets.index')->with('success', 'Pet, owner, and image created successfully');
+    }
     /**
      * Display the specified resource.
      */

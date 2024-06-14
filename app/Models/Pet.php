@@ -25,7 +25,7 @@ class Pet extends Model
         return $this->belongsTo(Owner::class);
     }
 
-    public function petImages()
+    public function images()
     {
         return $this->hasMany(PetImage::class);
     }
