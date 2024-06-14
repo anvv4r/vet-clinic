@@ -32,13 +32,13 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Age:</strong> <br />
-                    {{ $pet->age }}
+                    {{ $pet->age }} Years
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Weight:</strong> <br />
-                    {{ $pet->weight }}
+                    {{ $pet->weight }} Kg
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12">
