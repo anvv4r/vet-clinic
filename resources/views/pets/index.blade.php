@@ -23,46 +23,55 @@
         @endif
 
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <a class="btn btn-success btn-sm" href="{{ route('pets.create') }}"> <i class="fa fa-plus"></i> Submit
-                New Pet</a>
+            <a class="btn btn-success btn-sm" href="{{ route('pets.create') }}"> <i class="fa fa-plus"></i> New Pet</a>
         </div>
 
         <table class="table table-bordered table-striped mt-4">
             <thead>
                 <tr>
-                    <th width="80px">No</th>
+                    <th width="55px">ID</th>
                     <th>Name</th>
                     <th>Species</th>
                     <th>Breed</th>
                     <th>Age</th>
+                    <th>Weight</th>
                     <th>Owner</th>
-                    <th width="250px">Action</th>
+                    <th width="320px">Action</th>
                 </tr>
             </thead>
 
             <tbody>
                 @forelse ($pets as $pet)
                     <tr>
-                        <td>{{ ++$i }}</td>
+                        <td>{{ $pet->id }}</td>
                         <td>{{ $pet->name }}</td>
                         <td>{{ $pet->species }}</td>
                         <td>{{ $pet->breed }}</td>
                         <td>{{ $pet->age }}</td>
-                        <td>{{ $pet->owner ? $pet->owner->first_name : 'No owner' }}</td>
+                        <td>{{ $pet->weight }}</td>
+                        <td>{{ $pet->owner ? $pet->owner->first_name . ' ' . $pet->owner->surname : 'No owner' }}</td>
                         <td>
-                            <form action="{{ route('pets.destroy', $pet->id) }}" method="POST">
+                            <form id="delete-form-{{ $pet->id }}" action="{{ route('pets.destroy', $pet->id) }}"
+                                method="POST">
 
                                 <a class="btn btn-info btn-sm" href="{{ route('pets.show', $pet->id) }}"><i
                                         class="fa-solid fa-list"></i> Show</a>
 
                                 <a class="btn btn-primary btn-sm" href="{{ route('pets.edit', $pet->id) }}"><i
                                         class="fa-solid fa-pen-to-square"></i> Edit</a>
+                                <a class="btn btn-success btn-sm"
+                                    href="{{ route('visits.create', ['owner_id' => $pet->owner->id, 'pet_id' => $pet->id]) }}">
+                                    <i class="fa fa-plus"></i> Visit Log</a>
 
                                 @csrf
                                 @method('DELETE')
 
-                                <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i>
-                                    Delete</button>
+                                <button class="btn btn-danger btn-sm" onclick="event.preventDefault(); 
+                                if(confirm('Are you sure you want to delete this pet record?')) {
+                                    document.getElementById('delete-form-{{ $pet->id }}').submit();
+                                }">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </button>
                             </form>
                         </td>
                     </tr>

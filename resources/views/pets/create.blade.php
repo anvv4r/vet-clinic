@@ -103,57 +103,7 @@
                 <label for="owner_address"><strong>Address:</strong></label>
                 <input type="text" name="owner[address]" id="address" class="form-control" placeholder="Address">
             </div>
-
-            <!-- <div class="mb-3">
-                <div class="form-group">
-                    <label for="owner_first_name"><strong>Owner First Name:</strong></label>
-                    <input type="text" name="owner[first_name]" id="owner_first_name" class="form-control"
-                        placeholder="First Name">
-                </div>
-                @error('owner_first_name')
-                    <div class="form-text text-danger">{{ $message }}</div>
-                @enderror
-            </div>
-            <div class="mb-3">
-                <div class="form-group">
-                    <label for="owner_first_surname"><strong>Owner First Surname:</strong></label>
-                    <input type="text" name="owner[first_surname]" id="owner_first_surname" class="form-control"
-                        placeholder="First Surname">
-                </div>
-                @error('owner_first_surname')
-                    <div class="form-text text-danger">{{ $message }}</div>
-                @enderror
-            </div>
-            <div class="mb-3">
-                <div class="form-group">
-                    <label for="owner_email"><strong>Owner Email:</strong></label>
-                    <input type="text" name="owner[email]" id="owner_email" class="form-control" placeholder="Email">
-                </div>
-                @error('owner_email')
-                    <div class="form-text text-danger">{{ $message }}</div>
-                @enderror
-            </div>
-            <div class="mb-3">
-                <div class="form-group">
-                    <label for="owner_phone"><strong>Owner Phone:</strong></label>
-                    <input type="text" name="owner[phone]" id="owner_phone" class="form-control" placeholder="Phone">
-                </div>
-                @error('owner_phone')
-                    <div class="form-text text-danger">{{ $message }}</div>
-                @enderror
-            </div>
-            <div class="mb-3">
-                <div class="form-group">
-                    <label for="owner_address"><strong>Owner Address:</strong></label>
-                    <input type="text" name="owner[address]" id="owner_address" class="form-control"
-                        placeholder="Address">
-                </div>
-                @error('owner_address')
-                    <div class="form-text text-danger">{{ $message }}</div>
-                @enderror
-            </div> -->
             <br>
-
             <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Submit</button>
         </form>
 

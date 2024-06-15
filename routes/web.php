@@ -11,4 +11,5 @@ Route::get('/', function () {
 
 Route::resource('pets', PetController::class);
 
-Route::resource('visits', VisitController::class);
+Route::get('visits/create/{owner_id}/{pet_id}', [VisitController::class, 'create'])->name('visits.create');
+Route::resource('visits', VisitController::class)->except('create');

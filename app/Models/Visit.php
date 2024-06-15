@@ -9,11 +9,7 @@ class Visit extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'date',
-        'description',
-        'pet_id',
-    ];
+    protected $fillable = ['visit_date', 'owner_id', 'pet_id', 'report'];
 
     public function pet()
     {

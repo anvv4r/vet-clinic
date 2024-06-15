@@ -7,6 +7,7 @@ use App\Models\Pet;
 use App\Models\Owner;
 use App\Models\PetImage;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\RedirectResponse;
 
 class PetController extends Controller
@@ -133,8 +134,18 @@ class PetController extends Controller
         $petData = $request->except('owner', 'image');
         $pet->update($petData);
 
-        // Upload the image
+        // Check if a new image was provided
         if ($request->hasFile('image')) {
+            // Get the old image
+            $oldImage = PetImage::where('pet_id', $pet->id)->first();
+
+            // Delete the old image file
+            if ($oldImage) {
+                Storage::delete(public_path('images/pets/' . $oldImage->path));
+                $oldImage->delete();
+            }
+
+            // Upload the new image
             $imageName = pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME); // Get original file name without extension
             $uniqueSuffix = uniqid('_'); // Generate a unique ID
             $extension = $request->image->extension(); // Get file extension
@@ -143,15 +154,11 @@ class PetController extends Controller
 
             $request->image->move(public_path('images/pets'), $finalImageName);
 
-            // Check if the pet already has an image
-            $petImage = PetImage::where('pet_id', $pet->id)->first();
-            if (!$petImage) {
-                // Create a new image only if the pet doesn't already have one
-                $petImage = new PetImage;
-                $petImage->path = $finalImageName;
-                $petImage->pet_id = $pet->id;
-                $petImage->save(); // Save the PetImage model instance
-            }
+            // Create a new image record
+            $petImage = new PetImage;
+            $petImage->path = $finalImageName;
+            $petImage->pet_id = $pet->id;
+            $petImage->save(); // Save the PetImage model instance
         }
 
         // Add a success message to the session
