@@ -18,12 +18,9 @@
             <a class="btn btn-primary btn-sm" href="{{ route('pets.index') }}"><i class="fa fa-arrow-left"></i>
                 Back</a>
         </div>
-
-
         <form action="{{ route('pets.update', $pet->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
-
             <div class="mb-3">
                 <label for="inputName" class="form-label"><strong>Name:</strong></label>
                 <input type="text" name="name" value="{{ $pet->name }}"
@@ -114,8 +111,6 @@
             </div>
             <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Update</button>
         </form>
-
-
     </div>
 </div>
 @endsection

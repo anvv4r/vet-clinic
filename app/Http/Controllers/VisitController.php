@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Visit;
 use App\Models\Pet;
-use Illuminate\View\View;
 
 class VisitController extends Controller
 {
@@ -60,6 +59,40 @@ class VisitController extends Controller
     }
 
     /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($owner_id, $pet_id)
+    {
+        $pet = Pet::find($pet_id);
+        $visit = Visit::where('owner_id', $owner_id)->where('pet_id', $pet_id)->first();
+
+        if ($visit) {
+            return view('visits.edit', [
+                'owner_id' => $owner_id,
+                'pet_id' => $pet_id,
+                'pet_name' => $pet->name,
+                'date' => $visit->date,
+                'report' => $visit->report,
+                'visit' => $visit
+            ]);
+        } else {
+            return redirect()->route('pets.show', $pet_id)->with('error', 'No visit log found');
+        }
+    }
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, $visit_id)
+    {
+        $this->validate($request, $this->rules());
+
+        // You'll need to find the pet_id from the visit
+        $visit = Visit::find($visit_id);
+        $pet_id = $visit->pet_id;
+
+        return redirect()->route('pets.show', $pet_id)->with('success', 'Visit Log updated successfully');
+    }
+    /**
      * Display the specified resource.
      */
     public function show(string $id)
@@ -68,31 +101,8 @@ class VisitController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      */
-    // public function destroy(string $id)
-    // {
-
-    //     //
-
-    // }
-
     public function destroy(Visit $visit)
     {
         $pet_id = $visit->pet_id;

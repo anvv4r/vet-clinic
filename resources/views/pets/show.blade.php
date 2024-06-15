@@ -71,11 +71,13 @@
                             <strong>Report:</strong><br />
                             {{ $visit->report }}
 
-                            <a href="{{ route('visits.edit', $visit->id) }}">Edit</a> |
+                            <a
+                                href="{{ route('visits.edit', ['owner_id' => $visit->pet->owner->id, 'pet_id' => $visit->pet->id]) }}">Edit</a>
+                            |
                             <a href="{{ route('visits.destroy', $visit->id) }}" onclick="event.preventDefault(); 
-                                                         if(confirm('Are you sure you want to delete this visit?')) {
-                                                             document.getElementById('delete-form-{{ $visit->id }}').submit();
-                                                         }">Delete</a>
+                                                                 if(confirm('Are you sure you want to delete this visit?')) {
+                                                                     document.getElementById('delete-form-{{ $visit->id }}').submit();
+                                                                 }">Delete</a>
 
                             <form id="delete-form-{{ $visit->id }}" action="{{ route('visits.destroy', $visit->id) }}"
                                 method="POST" style="display: none;">

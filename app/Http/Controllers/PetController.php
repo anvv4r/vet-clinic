@@ -100,24 +100,6 @@ class PetController extends Controller
 
         return redirect()->route('pets.index')->with('success', 'Pet, owner, and image created successfully');
     }
-    /**
-     * Display the specified resource.
-     */
-    public function show(Pet $pet): View
-    {
-        return view('pets.show', compact('pet'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Pet $pet): View
-    {
-        $species = Pet::select('species')->distinct()->get();
-        $breeds = Pet::select('breed')->distinct()->get();
-
-        return view('pets.edit', compact('pet', 'species', 'breeds'));
-    }
 
     /**
      * Update the specified resource in storage.
@@ -166,6 +148,17 @@ class PetController extends Controller
     }
 
     /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Pet $pet): View
+    {
+        $species = Pet::select('species')->distinct()->get();
+        $breeds = Pet::select('breed')->distinct()->get();
+
+        return view('pets.edit', compact('pet', 'species', 'breeds'));
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Pet $pet): RedirectResponse
@@ -174,6 +167,14 @@ class PetController extends Controller
 
         return redirect()->route('pets.index')
             ->with('success', 'Pet deleted successfully');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Pet $pet): View
+    {
+        return view('pets.show', compact('pet'));
     }
 
 }
