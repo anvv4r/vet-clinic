@@ -9,10 +9,11 @@
         <button class="btn btn-outline-success" type="submit">Search</button>
     </form>
     @if(request()->query('search'))
-        <a class="btn btn-primary" href="{{ route('pets.index') }}">Home</a>
+        <a class="btn btn-primary" href="{{ route('pets.index') }}"><i class="fa fa-arrow-left"></i> Pet Lists</a>
+    @else
+        <a class="btn btn-primary" href="{{ url('/') }}">Home</a>
     @endif
 </div>
-
 
 <div class="card mt-5">
     <h2 class="card-header">Pet List</h2>
@@ -67,9 +68,9 @@
                                 @method('DELETE')
 
                                 <button class="btn btn-danger btn-sm" onclick="event.preventDefault(); 
-                                if(confirm('Are you sure you want to delete this pet record?')) {
-                                    document.getElementById('delete-form-{{ $pet->id }}').submit();
-                                }">
+                                                if(confirm('Are you sure you want to delete this pet record?')) {
+                                                    document.getElementById('delete-form-{{ $pet->id }}').submit();
+                                                }">
                                     <i class="fa-solid fa-trash"></i> Delete
                                 </button>
                             </form>

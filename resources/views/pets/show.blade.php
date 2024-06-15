@@ -11,13 +11,14 @@
         @endif
 
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <a class="btn btn-primary btn-sm" href="{{ route('pets.edit', $pet->id) }}"><i
-                    class="fa-solid fa-pen-to-square"></i>
-                Edit</a>
+            <a class="btn btn-primary btn-sm" href="{{ route('pets.index') }}"><i class="fa fa-arrow-left"></i> Pet
+                Lists</a>
             <a class="btn btn-success btn-sm"
                 href="{{ route('visits.create', ['owner_id' => $pet->owner->id, 'pet_id' => $pet->id]) }}">
                 <i class="fa fa-plus"></i> Visit Log</a>
-            <a class="btn btn-primary btn-sm" href="{{ route('pets.index') }}">Home</a>
+            <a class="btn btn-primary btn-sm" href="{{ route('pets.edit', $pet->id) }}"><i
+                    class="fa-solid fa-pen-to-square"></i>
+                Edit</a>
         </div>
         <div class="card-body d-flex gap-3 flex-row justify-content-start align-items-start">
             <div style="max-width: 30%;">
@@ -75,9 +76,9 @@
                                 href="{{ route('visits.edit', ['owner_id' => $visit->pet->owner->id, 'pet_id' => $visit->pet->id]) }}">Edit</a>
                             |
                             <a href="{{ route('visits.destroy', $visit->id) }}" onclick="event.preventDefault(); 
-                                                                 if(confirm('Are you sure you want to delete this visit?')) {
-                                                                     document.getElementById('delete-form-{{ $visit->id }}').submit();
-                                                                 }">Delete</a>
+                                                                                 if(confirm('Are you sure you want to delete this visit?')) {
+                                                                                     document.getElementById('delete-form-{{ $visit->id }}').submit();
+                                                                                 }">Delete</a>
 
                             <form id="delete-form-{{ $visit->id }}" action="{{ route('visits.destroy', $visit->id) }}"
                                 method="POST" style="display: none;">
