@@ -23,9 +23,15 @@
             <div class="alert alert-success" role="alert"> {{ session('success') }} </div>
         @endif
 
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <a class="btn btn-success btn-sm" href="{{ route('pets.create') }}"> <i class="fa fa-plus"></i> New Pet</a>
-        </div>
+        @if(Auth::check() && Auth::user()->role == 'admin')
+            <!-- Show edit and delete buttons only for admin -->
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a class="btn btn-success btn-sm" href="{{ route('pets.create') }}"> <i class="fa fa-plus"></i> New Pet</a>
+            </div>
+
+        @endif
+
 
         <table class="table table-bordered table-striped mt-4">
             <thead>
@@ -37,7 +43,7 @@
                     <th>Age</th>
                     <th>Weight</th>
                     <th>Owner</th>
-                    <th width="320px">Action</th>
+                    <th width="auto">Action</th>
                 </tr>
             </thead>
 
@@ -58,21 +64,28 @@
                                 <a class="btn btn-info btn-sm" href="{{ route('pets.show', $pet->id) }}"><i
                                         class="fa-solid fa-list"></i> Show</a>
 
-                                <a class="btn btn-primary btn-sm" href="{{ route('pets.edit', $pet->id) }}"><i
-                                        class="fa-solid fa-pen-to-square"></i> Edit</a>
-                                <a class="btn btn-success btn-sm"
-                                    href="{{ route('visits.create', ['owner_id' => $pet->owner->id, 'pet_id' => $pet->id]) }}">
-                                    <i class="fa fa-plus"></i> Visit Log</a>
+                                @if(Auth::check() && Auth::user()->role == 'admin')
+                                    <!-- Show edit and delete buttons -->
 
-                                @csrf
-                                @method('DELETE')
 
-                                <button class="btn btn-danger btn-sm" onclick="event.preventDefault(); 
-                                                if(confirm('Are you sure you want to delete this pet record?')) {
-                                                    document.getElementById('delete-form-{{ $pet->id }}').submit();
-                                                }">
-                                    <i class="fa-solid fa-trash"></i> Delete
-                                </button>
+                                    <a class="btn btn-primary btn-sm" href="{{ route('pets.edit', $pet->id) }}"><i
+                                            class="fa-solid fa-pen-to-square"></i> Edit</a>
+                                    <a class="btn btn-success btn-sm"
+                                        href="{{ route('visits.create', ['owner_id' => $pet->owner->id, 'pet_id' => $pet->id]) }}">
+                                        <i class="fa fa-plus"></i> Visit Log</a>
+
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button class="btn btn-danger btn-sm" onclick="event.preventDefault(); 
+                                                                                                                    if(confirm('Are you sure you want to delete this pet record?')) {
+                                                                                                                        document.getElementById('delete-form-{{ $pet->id }}').submit();
+                                                                                                                    }">
+                                        <i class="fa-solid fa-trash"></i> Delete
+                                    </button>
+
+                                @endif
+
                             </form>
                         </td>
                     </tr>
